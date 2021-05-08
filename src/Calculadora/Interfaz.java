@@ -293,7 +293,7 @@ public class Interfaz extends javax.swing.JFrame {
         }
         if (cadena.contains("(") || cadena.contains(")")) {
             int contadorApertura = 0;
-            int contadorCierre = 0;
+            int contadorCierre =  0;
             String parentesisApertura = "(";
             String parentesisCierre = ")";
             for (int i = 0; i < cadena.length(); i++) {
