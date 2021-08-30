@@ -5,8 +5,11 @@
  */
 package Calculadora;
 
+import java.awt.Color;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-
+import Logica.Calculo.*;
+import Logica.Prop.*;
 /**
  *
  * @author Daniel Vargas
@@ -20,6 +23,50 @@ public class Interfaz extends javax.swing.JFrame {
         initComponents();
         this.setLocationRelativeTo(null);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+    }
+    
+    public void calculoLogico (String expresion) {
+        
+        DivisionPropSimple divisorPropSimple = new DivisionPropSimple();
+        DivisionPropComplex divisorPropComplex = new DivisionPropComplex();
+                
+        divisorPropSimple.dividirProp(expresion);
+        divisorPropComplex.dividirProp(expresion);      
+        
+        CalculoPropSimple calculadorSimple = new CalculoPropSimple();
+        calculadorSimple.calcularTablaVerdad(divisorPropSimple.getListaProp());
+        
+        int contadorSimple = 0;
+        int contadorComplex = 0;
+        
+        for(PropSimple p : calculadorSimple.getListaConTablas()){
+            contadorSimple++;
+            System.out.println(p.getExpresion()
+                    + ": "
+                    + p.getListaValores().toString());
+            if (contadorSimple == (calculadorSimple.getListaConTablas().size())
+                    && divisorPropComplex.getListaProp().isEmpty()){
+                System.out.println(p.getTipo());
+            }
+        }
+        
+        if(!divisorPropComplex.getListaProp().isEmpty()){
+            CalculoPropComplex calculadorComplex = new CalculoPropComplex();
+            calculadorComplex.calcularTablaVerdad(
+                    divisorPropSimple.getListaProp(), 
+                    divisorPropComplex.getListaProp()
+            );
+            
+            for(PropComplex p : calculadorComplex.getListaConTablas()){
+                contadorComplex++;
+                System.out.println(p.getExpresion()
+                        + ": "
+                        + p.getListaValores().toString());
+                if (contadorComplex == calculadorComplex.getListaConTablas().size()){
+                    System.out.println(p.getTipo());
+                }
+            }          
+        }
     }
 
     /**
@@ -169,9 +216,7 @@ public class Interfaz extends javax.swing.JFrame {
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                     .addComponent(jButton6, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
                                     .addComponent(jButton7, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                    .addGroup(layout.createSequentialGroup()
-                                        .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                        .addGap(0, 0, 0)))
+                                    .addComponent(jButton2, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE))
                                 .addGap(18, 18, 18)
                                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
                                     .addComponent(jButton5, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -183,7 +228,7 @@ public class Interfaz extends javax.swing.JFrame {
                                 .addComponent(jButton12, javax.swing.GroupLayout.PREFERRED_SIZE, 51, javax.swing.GroupLayout.PREFERRED_SIZE))))
                     .addComponent(jLabel1)
                     .addComponent(proposicion, javax.swing.GroupLayout.PREFERRED_SIZE, 189, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(211, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -212,7 +257,7 @@ public class Interfaz extends javax.swing.JFrame {
                     .addComponent(jButton12)
                     .addComponent(jButton11)
                     .addComponent(jButton13))
-                .addContainerGap(26, Short.MAX_VALUE))
+                .addContainerGap(30, Short.MAX_VALUE))
         );
 
         pack();
@@ -266,34 +311,50 @@ public class Interfaz extends javax.swing.JFrame {
         if (cadena.contains("pp") || cadena.contains("pq") || cadena.contains("pr") || cadena.contains("qq") || cadena.contains("qp") || cadena.contains("qr") || cadena.contains("rr") || cadena.contains("rp") || cadena.contains("rq")) {
             JOptionPane.showMessageDialog(null, "Entrada Inválida");
             proposicion.setText("");
-        }
-        if (cadena.contains("()") || cadena.contains("(∧") || cadena.contains("(∨") || cadena.contains("(→")) {
+
+        } else if (cadena.contains("()") || cadena.contains("(∧") || cadena.contains("(∨") || cadena.contains("(→")) {
             JOptionPane.showMessageDialog(null, "Entrada Inválida");
             proposicion.setText("");
-        }
-        if (cadena.contains("∧)") || cadena.contains("∧∧") || cadena.contains("∧∨") || cadena.contains("∧→")) {
+
+        } else if (cadena.contains("∧)") || cadena.contains("∧∧") || cadena.contains("∧∨") || cadena.contains("∧→")) {
             JOptionPane.showMessageDialog(null, "Entrada Inválida");
             proposicion.setText("");
-        }
-        if (cadena.contains("∨)") || cadena.contains("∨∧") || cadena.contains("∨∨") || cadena.contains("∨→")) {
+
+        } else if (cadena.contains("∨)") || cadena.contains("∨∧") || cadena.contains("∨∨") || cadena.contains("∨→")) {
             JOptionPane.showMessageDialog(null, "Entrada Inválida");
             proposicion.setText("");
-        }
-        if (cadena.contains("→)") || cadena.contains("→∧") || cadena.contains("→∨") || cadena.contains("→→")) {
+
+        } else if (cadena.contains("→)") || cadena.contains("→∧") || cadena.contains("→∨") || cadena.contains("→→")) {
             JOptionPane.showMessageDialog(null, "Entrada Inválida");
             proposicion.setText("");
-        }
-        if (cadena.contains("¬)") || cadena.contains("¬∧") || cadena.contains("¬∨")) {
+
+        } else if (cadena.contains("p(") || cadena.contains("q(") || cadena.contains("r(")) {
             JOptionPane.showMessageDialog(null, "Entrada Inválida");
             proposicion.setText("");
-        }
-        if (cadena.startsWith(")") || cadena.endsWith("(")) {
+
+        } else if (cadena.contains(")p") || cadena.contains(")q") || cadena.contains(")r")) {
             JOptionPane.showMessageDialog(null, "Entrada Inválida");
             proposicion.setText("");
-        }
-        if (cadena.contains("(") || cadena.contains(")")) {
+
+        } else if (cadena.contains("p¬") || cadena.contains("q¬") || cadena.contains("r¬")) {
+            JOptionPane.showMessageDialog(null, "Entrada Inválida");
+            proposicion.setText("");
+
+        } else if (cadena.contains("¬)") || cadena.contains("¬∧") || cadena.contains("¬∨")) {
+            JOptionPane.showMessageDialog(null, "Entrada Inválida");
+            proposicion.setText("");
+
+        } else if (cadena.startsWith(")") || cadena.endsWith("(")) {
+            JOptionPane.showMessageDialog(null, "Entrada Inválida");
+            proposicion.setText("");
+
+        } else if (cadena.endsWith("∧") || cadena.endsWith("∨") || cadena.endsWith("¬") || cadena.endsWith("→")) {
+            JOptionPane.showMessageDialog(null, "Entrada Inválida");
+            proposicion.setText("");
+
+        } else if (cadena.contains("(") || cadena.contains(")")) {
             int contadorApertura = 0;
-            int contadorCierre =  0;
+            int contadorCierre = 0;
             String parentesisApertura = "(";
             String parentesisCierre = ")";
             for (int i = 0; i < cadena.length(); i++) {
@@ -309,9 +370,24 @@ public class Interfaz extends javax.swing.JFrame {
             if (contadorApertura != contadorCierre) {
                 JOptionPane.showMessageDialog(null, "Entrada Inválida");
                 proposicion.setText("");
-            }
 
+            } else{
+                calculoLogico (cadena);
+            }
+        } else if (cadena.startsWith("∧") 
+                || cadena.startsWith("∨") 
+                || cadena.startsWith("→") 
+                || cadena.equals("¬") 
+                || cadena.equals("")) 
+        {
+            JOptionPane.showMessageDialog(null, "Entrada Inválida");
+            proposicion.setText("");
+
+        } else {
+            calculoLogico (cadena);
         }
+
+
     }//GEN-LAST:event_jButton12ActionPerformed
 
     private void proposicionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_proposicionActionPerformed
